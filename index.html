@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ausländerbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+
+        .scroll-spacer {
+            height: calc(900vh - 100vh);
+            pointer-events: none;
+        }
+
+        .slide {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            scroll-snap-align: start;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            text-align: center;
+            pointer-events: none;
+            background: #f0ead6;
+            color: #333;
+            max-width: 800px;
+        }
+
+        .slide * {
+            pointer-events: auto;
+        }
+
+        .slide h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .slide p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 2px solid #333;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #555;
+            border-color: #555;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Signature input styles */
+        .signature-container {
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .signature-container.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .signature-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            max-width: 600px;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+            border-left: 3px solid #333;
+            font-family: 'Courier New', monospace;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .signature-text .char {
+            transition: all 0.2s ease;
+        }
+
+        .signature-text .char.correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .signature-text .char.incorrect {
+            color: #e74c3c;
+            font-weight: bold;
+            animation: wiggle 0.3s;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        .signature-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .telegram-link {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            margin-top: 2rem;
+        }
+
+        .telegram-link.show {
+            display: block;
+            animation: fadeInUpTelegram 0.3s ease forwards;
+        }
+
+        @keyframes fadeInUpTelegram {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 45px;
+            background: #0088cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 136, 204, 0.3);
+        }
+
+        .telegram-btn:hover {
+            background: #006699;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="scroll-container" id="scrollContainer">
+        <div class="scroll-spacer"></div>
+
+        <section class="slide">
+            <p>How long have you been waiting for a free appointment at the Ausländeramt?</p>
+        </section>
+
+        <section class="slide">
+            <p>Does the Ausländeramt notify you when there is a free appointment? <strong>Of course not.</strong></p>
+        </section>
+
+        <section class="slide">
+            <p>Are there people deploying bots to book appointments automatically to sell them? <strong>Probably.</strong></p>
+        </section>
+
+        <section class="slide">
+            <p>So I built one myself: <strong>The Ausländerbot</strong>.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Q1. How is this ethical?</h2>
+            <p>Ausländerbot doesn't <strong>book</strong> appointments. He only <strong>notifies</strong> you when he finds a free slot. It is your responsibility to book before others do.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Q2. How much is this service?</h2>
+            <p>The Ausländerbot is free of charge.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Q3. Why are you doing this?</h2>
+            <p>I wanted people to be able to compete with other people, not against bots.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Need an appointment?</h2>
+
+            <div class="signature-container" id="signatureContainer">
+                 <p>To proceed, please type the agreement statement below:</p>
+                <div class="signature-text" id="signatureText">By using this bot, I swear I will only use it personally, not commercially, and will not abuse or exploit it. Misuse may lead to loss of access and legal consequences.</div>
+                <input type="text" class="signature-input" id="signatureInput" placeholder="Type the statement above..." autocomplete="off">
+            </div>
+
+            <div class="telegram-link" id="telegramLink">
+                <a href="#" class="telegram-btn" target="_blank" data-encoded="aHR0cHM6Ly90Lm1lLystd25ZOHBrcUF5WXlNak5p">
+                    <span class="telegram-url"></span>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Decode Telegram link
+        const telegramBtn = document.querySelector('.telegram-btn');
+        const encodedLink = telegramBtn.getAttribute('data-encoded');
+        const decodedLink = atob(encodedLink);
+        telegramBtn.href = decodedLink;
+        document.querySelector('.telegram-url').textContent = decodedLink;
+
+        const scrollContainer = document.getElementById('scrollContainer');
+        const slides = document.querySelectorAll('.slide');
+
+        scrollContainer.addEventListener('scroll', () => {
+            const scrollTop = scrollContainer.scrollTop;
+            const windowHeight = window.innerHeight;
+
+            slides.forEach((slide, index) => {
+                const slideOffset = index * windowHeight;
+                const distance = Math.abs(scrollTop - slideOffset);
+                const opacity = Math.max(0, 1 - (distance / windowHeight));
+
+                slide.style.opacity = opacity;
+
+                const scale = 1 - (distance / windowHeight) * 0.05;
+                slide.style.transform = `scale(${Math.max(0.95, Math.min(1, scale))})`;
+            });
+        });
+
+        scrollContainer.dispatchEvent(new Event('scroll'));
+
+        document.addEventListener('keydown', (e) => {
+            const currentScroll = scrollContainer.scrollTop;
+            const windowHeight = window.innerHeight;
+
+            if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                e.preventDefault();
+                scrollContainer.scrollBy({
+                    top: windowHeight,
+                    behavior: 'smooth'
+                });
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                scrollContainer.scrollBy({
+                    top: -windowHeight,
+                    behavior: 'smooth'
+                });
+            }
+        });
+
+        const signatureInput = document.getElementById('signatureInput');
+        const signatureContainer = document.getElementById('signatureContainer');
+        const telegramLink = document.getElementById('telegramLink');
+        const signatureText = document.getElementById('signatureText');
+        const requiredText = signatureText.textContent;
+
+        signatureText.innerHTML = requiredText.split('').map((char, index) => 
+            `<span class="char" data-index="${index}">${char}</span>`
+        ).join('');
+
+        const chars = signatureText.querySelectorAll('.char');
+
+        signatureInput.addEventListener('input', () => {
+            const inputValue = signatureInput.value;
+            
+            chars.forEach(char => {
+                char.classList.remove('correct', 'incorrect');
+            });
+
+            for (let i = 0; i < inputValue.length; i++) {
+                if (i < requiredText.length) {
+                    if (inputValue[i] === requiredText[i]) {
+                        chars[i].classList.add('correct');
+                    } else {
+                        chars[i].classList.add('incorrect');
+                    }
+                }
+            }
+
+            if (inputValue === requiredText) {
+                signatureContainer.classList.add('fade-out');
+                setTimeout(() => {
+                    signatureContainer.style.display = 'none';
+                    telegramLink.classList.add('show');
+                }, 300);
+            }
+        });
+    </script>
+</body>
+
+</html>
