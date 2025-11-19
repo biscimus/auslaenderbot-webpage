@@ -19,37 +19,34 @@
             font-family: 'Crimson Pro', serif;
             overflow-x: hidden;
             scroll-behavior: smooth;
-        }
-
-        .scroll-container {
             height: 100vh;
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
-            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .scroll-container {
+            min-height: 100vh;
         }
 
         .scroll-spacer {
-            height: calc(900vh - 100vh);
-            pointer-events: none;
+            display: none;
         }
 
         .slide {
+            min-height: 100vh;
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             scroll-snap-align: start;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            scroll-snap-stop: always;
             padding: 2rem;
             text-align: center;
-            pointer-events: none;
             background: #f0ead6;
             color: #333;
+            position: relative;
         }
         
         .slide > * {
@@ -108,7 +105,6 @@
             font-size: 1.1rem;
             margin-bottom: 1.5rem;
             line-height: 1.6;
-            max-width: 600px;
             padding: 1rem;
             background: rgba(0, 0, 0, 0.03);
             border-radius: 10px;
@@ -118,6 +114,7 @@
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+            text-align: left;
         }
 
         .signature-text .char {
@@ -153,6 +150,7 @@
             font-family: 'Courier New', monospace;
             margin-bottom: 1rem;
             transition: all 0.3s ease;
+            box-sizing: border-box;
         }
 
         @keyframes shake {
@@ -274,47 +272,23 @@
     </div>
 
     <script>
-        // Decode Telegram link
         const telegramBtn = document.querySelector('.telegram-btn');
         const encodedLink = telegramBtn.getAttribute('data-encoded');
         const decodedLink = atob(encodedLink);
         telegramBtn.href = decodedLink;
         document.querySelector('.telegram-url').textContent = decodedLink;
-
-        const scrollContainer = document.getElementById('scrollContainer');
-        const slides = document.querySelectorAll('.slide');
-
-        scrollContainer.addEventListener('scroll', () => {
-            const scrollTop = scrollContainer.scrollTop;
-            const windowHeight = window.innerHeight;
-
-            slides.forEach((slide, index) => {
-                const slideOffset = index * windowHeight;
-                const distance = Math.abs(scrollTop - slideOffset);
-                const opacity = Math.max(0, 1 - (distance / windowHeight));
-
-                slide.style.opacity = opacity;
-
-                const scale = 1 - (distance / windowHeight) * 0.05;
-                slide.style.transform = `scale(${Math.max(0.95, Math.min(1, scale))})`;
-            });
-        });
-
-        scrollContainer.dispatchEvent(new Event('scroll'));
-
         document.addEventListener('keydown', (e) => {
-            const currentScroll = scrollContainer.scrollTop;
             const windowHeight = window.innerHeight;
 
             if (e.key === 'ArrowDown' || e.key === 'PageDown') {
                 e.preventDefault();
-                scrollContainer.scrollBy({
+                window.scrollBy({
                     top: windowHeight,
                     behavior: 'smooth'
                 });
             } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
                 e.preventDefault();
-                scrollContainer.scrollBy({
+                window.scrollBy({
                     top: -windowHeight,
                     behavior: 'smooth'
                 });
